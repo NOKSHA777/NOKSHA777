@@ -1,42 +1,62 @@
 import socket
-import string
-import random
+import os
+import sys
+import time
 
-# Port Scanning Function
+# Matrix green terminal style
+os.system('color 0A')
 
+def print_ascii_art():
+    art = '''
+       ___   __    _  _______  _______  _______  _______  _______  
+      |   | |  |  | ||   _   ||   _   ||   _   ||   _   ||   _   |
+      |   | |  |  | ||  | |  ||  |_|  ||  | |  ||  |_|  ||  |_|  |
+      |   | |  |  | ||  |_|  ||       ||  | |  ||       ||       |
+      |   | |  |__| ||       ||       ||  |_|  ||       ||       |
+      |   | |   __  ||       ||   _   ||       ||   _   ||   _   |
+      |___| |__|  |__||_______||__| |__||_______||__| |__||__| |__|
+    '''
+    print(art)
+
+# Port scanning function
 def port_scan(target, ports):
     open_ports = []
     for port in ports:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.settimeout(1)
-            result = sock.connect_ex((target, port))
-            if result == 0:
-                open_ports.append(port)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        if sock.connect_ex((target, port)) == 0:
+            open_ports.append(port)
+        sock.close()
     return open_ports
 
-# Password Strength Checker
+# Password checking function (dummy example)
+def check_password(password):
+    # In a real scenario, check against hashed passwords
+your_password = 'h4ck3r'
+    return password == your_password
 
-def check_password_strength(password):
-    if len(password) < 8:
-        return "Weak: Password must be at least 8 characters long."
-    if not any(char.isdigit() for char in password):
-        return "Weak: Password must contain at least one digit."
-    if not any(char.isupper() for char in password):
-        return "Weak: Password must contain at least one uppercase letter."
-    if not any(char in string.punctuation for char in password):
-        return "Weak: Password must contain at least one special character."
-    return "Strong: Password meets all requirements."
-
-# Network Analysis Function
-
+# Network analysis function
 def analyze_network(target):
-    open_ports = port_scan(target, range(1, 1025))
-    return open_ports
+    print(f'Analyzing network for: {target}')
+    # Insert network analysis code here
+    # This is where you'd implement actual network analysis
 
-# Example Usage
 if __name__ == '__main__':
-    target_ip = '127.0.0.1'
-    print(f'Open ports on {target_ip}: {analyze_network(target_ip)}')
+    print_ascii_art()
+    target = input('Enter target IP: ')
+    ports = range(1, 1025)  # Scanning first 1024 ports
+    print(f'Scanning ports on {target}...')
+    open_ports = port_scan(target, ports)
+    if open_ports:
+        print(f'Open ports: {open_ports}')
+    else:
+        print('No open ports found.')
 
-    password = 'Example@123'
-    print(check_password_strength(password))
+    password = input('Enter password to check: ')
+    if check_password(password):
+        print('Access granted!')
+    else:
+        print('Access denied!')
+
+    analyze_network(target)
+    time.sleep(2)
