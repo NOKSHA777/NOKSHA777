@@ -1,0 +1,9 @@
+cryptography
+reportlab
+pycryptodome
+PyQt5
+pefile
+discord.py
+requests
+opencv-python
+numpy
