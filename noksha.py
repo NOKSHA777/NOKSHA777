@@ -1,62 +1,54 @@
-import socket
 import os
 import sys
-import time
+import json
+from Crypto.Cipher import AES
+from PyQt5 import QtWidgets, uic
+import pdfkit
+import datetime
+# Additional imports needed for malware analysis...
 
-# Matrix green terminal style
-os.system('color 0A')
+# AES Encryption Class
+class AESEncryption:
+    def __init__(self, key):
+        self.key = key
+        self.cipher = AES.new(self.key, AES.MODE_EAX)
 
-def print_ascii_art():
-    art = '''
-       ___   __    _  _______  _______  _______  _______  _______  
-      |   | |  |  | ||   _   ||   _   ||   _   ||   _   ||   _   |
-      |   | |  |  | ||  | |  ||  |_|  ||  | |  ||  |_|  ||  |_|  |
-      |   | |  |  | ||  |_|  ||       ||  | |  ||       ||       |
-      |   | |  |__| ||       ||       ||  |_|  ||       ||       |
-      |   | |   __  ||       ||   _   ||       ||   _   ||   _   |
-      |___| |__|  |__||_______||__| |__||_______||__| |__||__| |__|
-    '''
-    print(art)
+    def encrypt(self, plaintext):
+        ciphertext, tag = self.cipher.encrypt_and_digest(plaintext.encode('utf-8'))
+        return ciphertext
 
-# Port scanning function
-def port_scan(target, ports):
-    open_ports = []
-    for port in ports:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(1)
-        if sock.connect_ex((target, port)) == 0:
-            open_ports.append(port)
-        sock.close()
-    return open_ports
+# Vulnerability Database Loader
+class VulnerabilityDatabase:
+    def __init__(self, db_path):
+        self.db_path = db_path
 
-# Password checking function (dummy example)
-def check_password(password):
-    # In a real scenario, check against hashed passwords
-your_password = 'h4ck3r'
-    return password == your_password
+    def load(self):
+        with open(self.db_path) as f:
+            return json.load(f)
 
-# Network analysis function
-def analyze_network(target):
-    print(f'Analyzing network for: {target}')
-    # Insert network analysis code here
-    # This is where you'd implement actual network analysis
+# GUI Interface
+class MainApp(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(MainApp, self).__init__()
+        uic.loadUi('interface.ui', self)
+        self.initUI()
 
+    def initUI(self):
+        self.setWindowTitle('Noksha Security Tool')
+        self.show()
+
+# PDF Report Generation
+def generate_pdf(report_data):
+    pdfkit.from_string(report_data, 'report.pdf')
+
+# Malware Analysis Functionality
+def analyze_malware(file_path):
+    # Your malware analysis logic here...
+    pass
+
+# Main Execution
 if __name__ == '__main__':
-    print_ascii_art()
-    target = input('Enter target IP: ')
-    ports = range(1, 1025)  # Scanning first 1024 ports
-    print(f'Scanning ports on {target}...')
-    open_ports = port_scan(target, ports)
-    if open_ports:
-        print(f'Open ports: {open_ports}')
-    else:
-        print('No open ports found.')
-
-    password = input('Enter password to check: ')
-    if check_password(password):
-        print('Access granted!')
-    else:
-        print('Access denied!')
-
-    analyze_network(target)
-    time.sleep(2)
+    app = QtWidgets.QApplication(sys.argv)
+    main_app = MainApp()
+    # Example usage of other classes can be added here...
+    sys.exit(app.exec_())
